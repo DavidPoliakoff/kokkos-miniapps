@@ -751,8 +751,12 @@ void InitMeshDecomp(Int_t numRanks, Int_t myRank, Int_t *col, Int_t *row,
 /* might want to add access methods so that memory can be */
 /* better managed, as in luleshFT */
 
-template <typename T> T *Allocate(size_t size,const std::string& name = "no-label") {
-  return static_cast<T *>(Kokkos::kokkos_malloc<>(name, sizeof(T) * size));
+template <typename T> T *Allocate(size_t size,const char* name) {
+  return static_cast<T *>(Kokkos::kokkos_malloc<>(sizeof(T) * size));
+}
+
+template <typename T> T *Allocate(size_t size) {
+  return Allocate<T>(size,"no-label");
 }
 
 template <typename T> void Release(T **ptr) {
