@@ -23,7 +23,7 @@ void ResizeBuffer(const size_t size) {
   if(size/sizeof(Real_t)+1 > buffer_size) {
     buffer_size = size/sizeof(Real_t)+1;
     Release<Real_t>(&buffer);
-    buffer = Allocate<Real_t>(buffer_size);
+    buffer = Allocate<Real_t>(buffer_size,"buffer");
   }
 }
 
@@ -741,10 +741,10 @@ static inline void CalcVolumeForceForElems(Domain &domain) {
   Index_t numElem = domain.numElem();
   if (numElem != 0) {
     Real_t hgcoef = domain.hgcoef();
-    Real_t *sigxx = Allocate<Real_t>(numElem);
-    Real_t *sigyy = Allocate<Real_t>(numElem);
-    Real_t *sigzz = Allocate<Real_t>(numElem);
-    Real_t *determ = Allocate<Real_t>(numElem);
+    Real_t *sigxx = Allocate<Real_t>(numElem,"sigxx");
+    Real_t *sigyy = Allocate<Real_t>(numElem,"sigyy");
+    Real_t *sigzz = Allocate<Real_t>(numElem,"sigzz");
+    Real_t *determ = Allocate<Real_t>(numElem,"determ");
 
     InitStressTermsForElems(domain, sigxx, sigyy, sigzz, numElem);
 
@@ -1844,7 +1844,7 @@ static inline void ApplyMaterialPropertiesForElems(Domain &domain) {
   if (numElem != 0) {
     Real_t eosvmin = domain.eosvmin();
     Real_t eosvmax = domain.eosvmax();
-    Real_t *vnewc = Allocate<Real_t>(numElem);
+    Real_t *vnewc = Allocate<Real_t>(numElem,"vnewc");
 
     Kokkos::parallel_for(
         "ApplyMaterialPropertiesForElems A", numElem,
@@ -2090,7 +2090,7 @@ int main(int argc, char *argv[]) {
 #endif
 
   Kokkos::initialize();
-
+  {
   opts.its = 9999999;
   opts.nx = 30;
   opts.numReg = 11;
@@ -2188,6 +2188,7 @@ int main(int argc, char *argv[]) {
   }
 
   Release(&buffer);
+}
   Kokkos::finalize();
 #if USE_MPI
   MPI_Finalize();

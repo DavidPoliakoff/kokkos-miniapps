@@ -1,14 +1,14 @@
 #Set your Kokkos path to something appropriate
-KOKKOS_PATH = $(HOME)kokkos
+KOKKOS_PATH = $(HOME)/src/kokkos
 KOKKOS_DEVICES = "Serial"
-KOKKOS_ARCH = "SNB"
+#KOKKOS_ARCH = ""
 
 SRC = $(wildcard *.cc)
 
 default: build
 	echo "Start Build"
 	
-CXXFLAGS = -g -O3 -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./
+CXXFLAGS = -g -O0 -DUSE_OMP=0 -DRAJA_USE_GETTIME -I./includes -I./
 
 #ifeq ( $(USE_MPI), yes) 
 #CXX = mpicxx

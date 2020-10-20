@@ -1,7 +1,7 @@
 #Set your Kokkos path to something appropriate
-KOKKOS_PATH = ${HOME}/kokkos
-KOKKOS_DEVICES = "OpenMP,Cuda"
-KOKKOS_ARCH = "SNB,Kepler35"
+KOKKOS_PATH = ${HOME}/src/kokkos
+KOKKOS_DEVICES = "Serial,Cuda"
+KOKKOS_ARCH = "Volta70"
 KOKKOS_CUDA_OPTIONS = force_uvm,enable_lambda
 SRC = $(wildcard *.cc)
 

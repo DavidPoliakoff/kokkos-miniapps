@@ -130,7 +130,7 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
    int shapetype[1] = {DB_ZONETYPE_HEX};
    int shapesize[1] = {8};
    int shapecnt[1] = {domain.numElem()};
-   int *conn = Allocate<int>(domain.numElem()*8) ;
+   int *conn = Allocate<int>(domain.numElem()*8,"conn") ;
    int ci = 0 ;
    for (int ei=0; ei < domain.numElem(); ++ei) {
       Index_t *elemToNode = domain.nodelist(ei) ;
@@ -148,9 +148,9 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
    /* Write out the mesh coordinates associated with the mesh */
    const char* coordnames[3] = {"X", "Y", "Z"};
    float *coords[3] ;
-   coords[0] = Allocate<float>(domain.numNode()) ;
-   coords[1] = Allocate<float>(domain.numNode()) ;
-   coords[2] = Allocate<float>(domain.numNode()) ;
+   coords[0] = Allocate<float>(domain.numNode(),"coords0") ;
+   coords[1] = Allocate<float>(domain.numNode(),"coords1") ;
+   coords[2] = Allocate<float>(domain.numNode(),"coords2") ;
    for (int ni=0; ni < domain.numNode() ; ++ni) {
       coords[0][ni] = float(domain.x(ni)) ;
       coords[1][ni] = float(domain.y(ni)) ;
@@ -168,7 +168,7 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
    Release<float>(&coords[0]) ;
 
    /* Write out the materials */
-   int *matnums = Allocate<int>(domain.numReg());
+   int *matnums = Allocate<int>(domain.numReg(),"matnums");
    int dims[1] = {domain.numElem()}; // No mixed elements
    for(int i=0 ; i<domain.numReg() ; ++i)
       matnums[i] = i+1;
@@ -180,7 +180,7 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
 
    /* Write out pressure, energy, relvol, q */
 
-   float *e = Allocate<float>(domain.numElem()) ;
+   float *e = Allocate<float>(domain.numElem(),"DumpVisit::e") ;
    for (int ei=0; ei < domain.numElem(); ++ei) {
       e[ei] = float(domain.e(ei)) ;
    }
@@ -190,7 +190,7 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
    Release<float>(&e) ;
 
 
-   float *p = Allocate<float>(domain.numElem()) ;
+   float *p = Allocate<float>(domain.numElem(),"DumpVisit::p") ;
    for (int ei=0; ei < domain.numElem(); ++ei) {
       p[ei] = float(domain.p(ei)) ;
    }
@@ -199,7 +199,7 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
                       NULL);
    Release<float>(&p) ;
 
-   float *v = Allocate<float>(domain.numElem()) ;
+   float *v = Allocate<float>(domain.numElem(), "DumpVisit::v") ;
    for (int ei=0; ei < domain.numElem(); ++ei) {
       v[ei] = float(domain.v(ei)) ;
    }
@@ -208,7 +208,7 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
                       NULL);
    Release<float>(&v) ;
 
-   float *q = Allocate<float>(domain.numElem()) ;
+   float *q = Allocate<float>(domain.numElem(),"DumpVisit::q") ;
    for (int ei=0; ei < domain.numElem(); ++ei) {
       q[ei] = float(domain.q(ei)) ;
    }
@@ -218,10 +218,10 @@ DumpDomainToVisit(DBfile *db, Domain& domain, int myRank)
    Release<float>(&q) ;
 
    /* Write out nodal speed, velocities */
-   float *zd    = Allocate<float>(domain.numNode());
-   float *yd    = Allocate<float>(domain.numNode());
-   float *xd    = Allocate<float>(domain.numNode());
-   float *speed = Allocate<float>(domain.numNode());
+   float *zd    = Allocate<float>(domain.numNode(),"DumpVisit::zd");
+   float *yd    = Allocate<float>(domain.numNode(),"DumpVisit::yd");
+   float *xd    = Allocate<float>(domain.numNode(),"DumpVisit::xd");
+   float *speed = Allocate<float>(domain.numNode(),"DumpVisit::speed");
    for(int ni=0 ; ni < domain.numNode() ; ++ni) {
       xd[ni]    = float(domain.xd(ni));
       yd[ni]    = float(domain.yd(ni));

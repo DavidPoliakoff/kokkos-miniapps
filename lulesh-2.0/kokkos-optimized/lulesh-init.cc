@@ -171,7 +171,7 @@ Domain::Domain(Int_t numRanks, Index_t colLoc,
 
    m_numNode = edgeNodes*edgeNodes*edgeNodes ;
 
-   m_regNumList = Allocate<Index_t>(numElem()) ;  // material indexset
+   m_regNumList = Allocate<Index_t>(numElem(),"m_regNumList") ;  // material indexset
 
    // Elem-centered 
    AllocateElemPersistent(numElem()) ;
@@ -374,7 +374,7 @@ void
 Domain::SetupThreadSupportStructures()
 {
     // set up node-centered indexing of elements 
-    Index_t *nodeElemCount = Allocate<Index_t>(numNode()) ;
+    Index_t *nodeElemCount = Allocate<Index_t>(numNode(),"nodeElemCount") ;
 
     for (Index_t i=0; i<numNode(); ++i) {
       nodeElemCount[i] = 0 ;
@@ -387,7 +387,7 @@ Domain::SetupThreadSupportStructures()
       }
     }
 
-    m_nodeElemStart = Allocate<Index_t>(numNode()+1) ;
+    m_nodeElemStart = Allocate<Index_t>(numNode()+1,"m_nodeElemStart") ;
 
     m_nodeElemStart[0] = 0;
 
@@ -396,7 +396,7 @@ Domain::SetupThreadSupportStructures()
 	m_nodeElemStart[i-1] + nodeElemCount[i-1] ;
     }
        
-    m_nodeElemCornerList = Allocate<Index_t>(m_nodeElemStart[numNode()]);
+    m_nodeElemCornerList = Allocate<Index_t>(m_nodeElemStart[numNode()],"m_nodeElemCornerList");
 
     for (Index_t i=0; i < numNode(); ++i) {
       nodeElemCount[i] = 0;
@@ -473,8 +473,8 @@ Domain::SetupCommBuffers(Int_t edgeNodes)
 		 (m_rowMax & m_colMax & m_planeMin) +
 		 (m_rowMax & m_colMax & m_planeMax)) * CACHE_COHERENCE_PAD_REAL ;
 
-  this->commDataSend = Allocate<Real_t>(comBufSize) ;
-  this->commDataRecv = Allocate<Real_t>(comBufSize) ;
+  this->commDataSend = Allocate<Real_t>(comBufSize,"commDataSend") ;
+  this->commDataRecv = Allocate<Real_t>(comBufSize, "commDataRecv") ;
   // prevent floating point exceptions 
   memset(this->commDataSend, 0, comBufSize*sizeof(Real_t)) ;
   memset(this->commDataRecv, 0, comBufSize*sizeof(Real_t)) ;
@@ -503,8 +503,8 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
    Index_t myRank = 0;
 #endif
    this->numReg() = nr;
-   m_regElemSize = Allocate<Index_t>(numReg());
-   m_regElemlist = Allocate<Index_t*>(numReg());
+   m_regElemSize = Allocate<Index_t>(numReg(),"m_regElemSize");
+   m_regElemlist = Allocate<Index_t*>(numReg(),"m_regElemlist");
    Index_t nextIndex = 0;
    //if we only have one region just fill it
    // Fill out the regNumList with material numbers, which are always
@@ -525,7 +525,7 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
       Index_t elements;
       Index_t runto = 0;
       Int_t costDenominator = 0;
-      Int_t* regBinEnd = Allocate<Int_t>(numReg());
+      Int_t* regBinEnd = Allocate<Int_t>(numReg(),"regBinEnd");
       //Determine the relative weights of all the regions.  This is based off the -b flag.  Balance is the value passed into b.  
       for (Index_t i=0 ; i<numReg() ; ++i) {
          regElemSize(i) = 0;
@@ -589,7 +589,7 @@ Domain::CreateRegionIndexSets(Int_t nr, Int_t balance)
    }
    // Second, allocate each region index set
    for (Index_t i=0 ; i<numReg() ; ++i) {
-      m_regElemlist[i] = Allocate<Int_t>(regElemSize(i));
+      m_regElemlist[i] = Allocate<Int_t>(regElemSize(i),"m_regElemListSubComponents");
       regElemSize(i) = 0;
    }
    // Third, fill index sets
